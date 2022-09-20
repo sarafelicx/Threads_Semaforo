@@ -1,0 +1,110 @@
+package view;
+
+import java.util.concurrent.Semaphore;
+
+import contr.metodos;
+
+public class Principal {
+	public static void main(String[] args) {
+		int id = 0;
+		long tempo = 0;
+		Semaphore s = new Semaphore(1);
+		for (int i = 0; i < 21; i++) {
+			Thread t = new metodos(id, tempo, s);
+			t.start();
+		}
+	}
+}
+===============================================================================
+package contr;
+
+import java.util.concurrent.Semaphore;
+
+public class metodos extends Thread {
+	private long id;
+	private long tempo;
+	private Semaphore s;
+
+	public metodos(int id, long tempo, Semaphore s) {
+		this.id = id;
+		this.tempo = tempo;
+		this.s = s;
+	}
+
+	@Override
+	public void run() {
+		try {
+			if (id % 3 == 1) {
+				calcId();
+				s.acquire();
+				BD();
+				s.release();
+				calcId();
+				s.acquire();
+				BD();
+				s.release();
+			} else if (id % 3 == 2) {
+				calcId();
+				s.acquire();
+				BD();
+				s.release();
+				calcId();
+				s.acquire();
+				BD();
+				s.release();
+				calcId();
+				s.acquire();
+				BD();
+				s.release();
+			} else if (id % 3 == 0) {
+				calcId();
+				s.acquire();
+				BD();
+				s.release();
+				calcId();
+				s.acquire();
+				BD();
+				s.release();
+				calcId();
+				s.acquire();
+				BD();
+				s.release();
+			}
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void calcId() throws InterruptedException {
+
+		id = (int) getId();
+		if (id % 3 == 1) {
+			tempo = (long) ((Math.random() * 1001) + 200);
+		} else if (id % 3 == 2) {
+			tempo = (long) ((Math.random() * 1501) + 500);
+		} else if (id % 3 == 0) {
+			tempo = (long) ((Math.random() * 2001) + 1000);
+		}
+
+		sleep(tempo);
+
+		System.out.println("id ==>" + id + " tempo calculo: " + (tempo / 1000) + "s");
+
+	}
+
+	private void BD() throws InterruptedException {
+		id = (int) getId();
+		if (id % 3 == 1) {
+			tempo = 1000;
+		} else if (id % 3 == 2) {
+			tempo = 1500;
+		} else if (id % 3 == 0) {
+			tempo = 1500;
+		}
+
+		sleep(tempo);
+
+		System.out.println("id ==>" + id + " tempo bd: " + (tempo / 1000) + "s");
+	}
+}
